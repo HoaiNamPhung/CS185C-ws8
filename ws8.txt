@@ -1,0 +1,44 @@
+Script started on 2021-10-16 21:37:50+00:00 [TERM="xterm" TTY="/dev/pts/0" COLU:MNS="80" LINES="24"]
+
+	First, I put all of the unverified (or verified) review bodies into their respective, cumulative files. I only used the first 200 reviews to do things quickly.
+
+db=~/amazon_reviews_us_Books_v1_02.tsv
+head -n200 $db | awk -F"\t" '$12=="N" {print $14}' >> unverified
+head -n200 $db | awk -F"\t" '$12=="Y" {print $14}' >> verified
+
+	Afterwards, I replaced spaces with new lines in order to count words on a line-by-line basis, obtaining the word count for each unique word.
+
+sed -r 's/[[:space:]]+/\n/g' unverified | sed '/^$/d' | sort | uniq -c | sort -nr | head -n10
+
+
+	The word counts for the top 10 used words were as follows for unverified, which consisted of 182 of 200 reviews:
+	
+   1713 the
+   1056 of
+   1003 and
+    866 to
+    753 a
+    553 is
+    500 in
+    465 I
+    429 that
+    338 <br
+	
+	The word counts for the top 10 used words were as follows for verified, which consisted of 17 of 200 reviews:
+	
+    146 the
+     88 of
+     82 to
+     78 and
+     56 is
+     51 a
+     42 in
+     38 that
+     38 I
+     35 for
+	 
+	I was uncertain as for why the two files were only made up of 199 of 200 reviews, but the following command quickly revealed that it was because the first row of labels was included and thus didn't have the expected values.
+	
+~/CS185C/ws/ws8$ head -n200 $db | awk -F"\t" '$12!="Y" && $12!="N" {print $14}'
+
+Script done on 2021-10-16 21:37:55+00:00 [COMMAND_EXIT_CODE="0"]
